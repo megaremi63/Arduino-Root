@@ -38,7 +38,7 @@ Servo servoTilt;
 
 const char* ssid = "Rogers56600";
 const char* password = "88CDFRogers";
-const char* mqtt_server = "192.168.0.15";    ///broker MQTT
+const char* mqtt_server = "192.168.0.12";    ///broker MQTT
  
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -90,31 +90,25 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
     Serial.print(string);  
   
-if ((String)topic == "servoPan"){        // Pan
+if ((String)topic == "home/nodered/jarvis/head/pan"){        // Pan
     Serial.print(" 2 ");
-   int resultadoPan = string.toInt();   
-   int posPan = map(resultadoPan, 1, 100, 0, 180);
+   int posPan = string.toInt();   
    Serial.println(posPan);
     servoPan.write(posPan);
     delay(15); 
 }
- else if ((String)topic == "servoTilt"){   // Tilt
+ else if ((String)topic == "home/nodered/set/head/tilt"){   // Tilt
      Serial.print(" 1 ");
-   int resultadoTilt = string.toInt();   
-   int posTilt = map(resultadoTilt, 1, 100, 0, 180);
+   int posTilt = string.toInt();   
    Serial.println(posTilt);
     servoTilt.write(posTilt);
     delay(15);
  }
-  else if ((String)topic == "servoCenter"){   // Tilt
-   int resultadocenter = string.toInt();   
-    if (resultadocenter == 1){
-      Serial.println("centering");
-      servoTilt.write(160);
+  else if ((String)topic == "home/nodered/set/eyes/pan"){   // Tilt
+   int eyepan = string.toInt();   
+      Serial.println("eye");
+      servoTilt.write(eyepan);
       delay(15);
-      servoPan.write(90);
-      delay(15);
-    }
  }
 }// END CALLBACK
 
@@ -126,9 +120,9 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
 
       Serial.println("connected");
-      client.subscribe("servoPan");
-      client.subscribe("servoTilt");
-      client.subscribe("servoCenter");
+      client.subscribe("home/nodered/jarvis/head/pan");
+      client.subscribe("home/nodered/jarvis/head/tilt");
+      client.subscribe("home/nodered/jarvis/eye/pan");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
